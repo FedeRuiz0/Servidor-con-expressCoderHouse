@@ -1,36 +1,24 @@
 const express = require('express');
-const fs = require('fs');
 const app = express();
+const products = require('./products');
 
 app.get('/products', (req, res) => {
-  fs.readFile('./products/products.json', 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send({ message: 'Error al leer el archivo de productos' });
-      return;
-    }
-    res.send(JSON.parse(data));
-  });
+  let result = products;
+  if (req.query.limit) {
+    result = products.slice(0, req.query.limit);
+  }
+  res.send(result);
 });
 
-app.get('/', (req, res) => {
-  fs.readFile('./products/products.json', 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send({ message: 'Error al leer el archivo de productos' });
-      return;
-    }
-    res.send(JSON.parse(data));
-  });
+app.get('/products/:id', (req, res) => {
+  const product = products.find(p => p.id === parseInt(req.params.id));
+  if (!product) {
+    res.status(404).send({ error: 'Producto no encontrado' });
+  } else {
+    res.send(product);
+  }
 });
 
-
-const PORT = 8080;
-
-app.listen(PORT, () => {
-  console.log(`Servidor http escuchado en el puerto ${PORT}`);
+app.listen(8080, () => {
+  console.log('Servidor escuchando en el puerto 8080');
 });
-
-
-
-

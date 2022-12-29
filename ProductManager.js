@@ -66,5 +66,7 @@ class ProductManager {
   }
 }
 
-const manager = new ProductManager('./products/products.json')
+const manager = new ProductManager('products.json')
 console.log(manager.getProducts())
+
+module.exports = ProductManager;
